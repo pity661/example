@@ -12,7 +12,18 @@ repositories {
     mavenCentral()
 }
 
+task runFormat(type: JavaExec) {
+    def mainJavaFiles = sourceSets.main.allJava.files
+    classpath = sourceSets.main.runtimeClasspath
+    main 'com.google.googlejavaformat.java.Main'
+    args '--replace'
+    args mainJavaFiles
+    args sourceSets.test.allJava.files
+}
+
 dependencies {
+    // runformat
+    implementation 'com.google.googlejavaformat:google-java-format:1+'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
