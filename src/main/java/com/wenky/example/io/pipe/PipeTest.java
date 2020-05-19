@@ -1,9 +1,7 @@
 package com.wenky.example.io.pipe;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.wenky.example.io.FilePath;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.Pipe;
@@ -30,7 +28,9 @@ public class PipeTest {
                   buffer.put(msg.getBytes());
                   // 翻转buffer让sinkChannel能读取
                   buffer.flip();
-                  sinkChannel.write(buffer);
+                  while (buffer.hasRemaining()) {
+                    sinkChannel.write(buffer);
+                  }
                   // 清空buffer准备下一次写入
                   buffer.clear();
                 }
@@ -77,13 +77,15 @@ public class PipeTest {
               // write
               try (Pipe.SinkChannel sinkChannel = pipe.sink()) {
                 ByteBuffer buffer = ByteBuffer.allocate(1024);
-                String filePath = ClassLoader.getSystemResource("static/test.txt").getPath();
+                String filePath = FilePath.getPath("pipe.txt");
                 System.out.println(filePath);
                 try (FileChannel fileChannel = new FileInputStream(filePath).getChannel()) {
                   while (fileChannel.read(buffer) > 0) {
                     // 翻转buffer让sinkChannel能读取
                     buffer.flip();
-                    sinkChannel.write(buffer);
+                    while (buffer.hasRemaining()) {
+                      sinkChannel.write(buffer);
+                    }
                     // 清空buffer准备下一次写入
                     buffer.clear();
                   }
@@ -101,15 +103,14 @@ public class PipeTest {
               // read
               try (Pipe.SourceChannel sourceChannel = pipe.source()) {
                 ByteBuffer buffer = ByteBuffer.allocate(1024);
-                String filePath =
-                    ClassLoader.getSystemResource("static").getPath()
-                        + File.separator
-                        + "test1.txt";
+                String filePath = FilePath.getPath("pipe1.txt");
                 System.out.println(filePath);
                 try (FileChannel fileChannel = new FileOutputStream(filePath).getChannel()) {
                   while ((sourceChannel.read(buffer)) > 0) {
                     buffer.flip();
-                    fileChannel.write(buffer);
+                    while (buffer.hasRemaining()) {
+                      fileChannel.write(buffer);
+                    }
                     buffer.clear();
                   }
                   System.out.println(Thread.currentThread().getName() + "结束了");
@@ -120,6 +121,11 @@ public class PipeTest {
             },
             "B")
         .start();
+  }
+
+  public void test() throws IOException {
+    PipedWriter pipedWriter = new PipedWriter();
+    PipedReader pipedReader = new PipedReader(pipedWriter);
   }
 
   public static void main(String[] args) throws IOException {

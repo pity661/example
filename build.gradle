@@ -8,8 +8,13 @@ group = 'com.wenky'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+
+//def lmr = 'file://' + new File('/Users/huwenqi/.m2/repository').absolutePath
+
 repositories {
+    mavenLocal()
     mavenCentral()
+//    maven {url lmr}
 }
 
 task runFormat(type: JavaExec) {
@@ -22,9 +27,16 @@ task runFormat(type: JavaExec) {
 }
 
 dependencies {
+    implementation 'com.wenky:spring-boot-start-demo:1.0.5-SNAPSHOT'
+//    implementation fileTree(dir:'libs',include:['*.jar'])
     // runformat
-    implementation 'com.google.googlejavaformat:google-java-format:1+'
+    implementation 'com.google.googlejavaformat:google-java-format:1.7'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation 'org.apache.commons:commons-lang3:3.5'
+    implementation 'com.alibaba:fastjson:1.2.29'
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }

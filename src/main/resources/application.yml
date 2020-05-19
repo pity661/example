@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: example
+#  profiles:
+#    active: wenky
+
+server:
+  port: 9999
+  servlet:
+    context-path: /example
+
+wenky:
+  auto:
+    config:
+      name: wenky
+      age: 24
+      list[0]: index0
+      list[1]: index1
+      list[2]: index2
