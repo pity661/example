@@ -1,6 +1,7 @@
 package com.wenky.example.crawler;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class ErLangChaTest {
   @Autowired private ErLangCha erLangCha;
+  @Autowired private ErlangChaV2 erlangChaV2;
 
   @Test
   public void test() {
@@ -25,5 +27,15 @@ class ErLangChaTest {
   @Test
   public void test2() throws IOException, InterruptedException {
     erLangCha.handle();
+  }
+
+  @Test
+  public void test3() throws ParseException, InterruptedException {
+    erlangChaV2.handle();
+  }
+
+  @Test
+  public void test4() throws IOException, InterruptedException {
+    erlangChaV2.cookieTest();
   }
 }

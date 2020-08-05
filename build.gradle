@@ -37,6 +37,11 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.5'
     implementation 'com.alibaba:fastjson:1.2.29'
 
+    // excel文件读取，特殊处理部分读取
+    implementation group: 'xerces', name: 'xerces', version: '2.4.0'
+    // 普通整个文件读入内存
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
