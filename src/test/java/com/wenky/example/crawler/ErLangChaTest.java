@@ -33,9 +33,4 @@ class ErLangChaTest {
   public void test3() throws ParseException, InterruptedException {
     erlangChaV2.handle();
   }
-
-  @Test
-  public void test4() throws IOException, InterruptedException {
-    erlangChaV2.cookieTest();
-  }
 }

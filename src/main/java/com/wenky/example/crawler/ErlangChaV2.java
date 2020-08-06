@@ -7,11 +7,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,12 +31,6 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class ErlangChaV2 {
   @Autowired private RestTemplate restTemplate;
-
-  public void cookieTest() {
-    ResponseEntity<String> response =
-        restTemplate.exchange("https://www.erlangcha.com/", HttpMethod.GET, null, String.class);
-    System.out.println(response.getHeaders());
-  }
 
   public List<String> getProductCodeList(String date, Integer page, Integer pageSize) {
     String url =
@@ -87,72 +79,93 @@ public class ErlangChaV2 {
   }
 
   public void handle() throws ParseException, InterruptedException {
-    String dateStart = "2020-05-01";
+    String dateStart = "2020-01-01";
     Date start = DateUtils.parseDate(dateStart, "yyyy-MM-dd");
-    String dateEnd = "2020-08-03";
+    String dateEnd = "2020-05-01";
     Date end = DateUtils.parseDate(dateEnd, "yyyy-MM-dd");
     ExecutorService executorService = Executors.newFixedThreadPool(10);
-    CountDownLatch countDownLatch = new CountDownLatch(94);
-    int i = 0;
+    CountDownLatch countDownLatch = new CountDownLatch(getCount(start, end));
     while (start.before(end)) {
       Date date = start;
       executorService.submit(
-          () -> {
-            try {
-              handle(DateFormatUtils.format(date, "yyyy-MM-dd"), 50, countDownLatch);
-            } catch (IOException e) {
-              e.printStackTrace();
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-            }
-          });
+          () -> handle(DateFormatUtils.format(date, "yyyy-MM-dd"), 50, countDownLatch));
       start = DateUtils.addDays(start, 1);
-      i++;
-      if (!start.before(end)) {
-        System.out.println(i);
-      }
     }
     countDownLatch.await();
+    System.out.println("跑完了");
   }
 
-  public void handle(String date, Integer pageSize, CountDownLatch countDownLatch)
-      throws IOException, InterruptedException {
+  private static int getCount(Date start, Date end) {
+    int i = 0;
+    while (start.before(end)) {
+      start = DateUtils.addDays(start, 1);
+      ++i;
+    }
+    return i;
+  }
+
+  public void handle(String date, Integer pageSize, CountDownLatch countDownLatch) {
+    // 先全部读取到手机号再进行写入文件操作
+    Set<String> mobileSet = new HashSet<>();
+    Integer page = 1;
+    List<String> list;
+    AtomicReference<Integer> count = new AtomicReference<>(0);
+    while (!(list = getProductCodeList(date, page, pageSize)).isEmpty()) {
+      ++page;
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
+      list.stream()
+          .forEach(
+              productCode -> {
+                String mobile = getPhoneNumber(productCode);
+                if (mobile != null
+                    && StringUtils.isNotBlank(mobile.trim())
+                    && mobile.length() == 11
+                    && mobile.startsWith("1")) {
+                  mobileSet.add(mobile);
+                  count.getAndSet(count.get() + 1);
+                }
+              });
+      stopWatch.stop();
+      System.out.println(
+          String.format(
+              "当前线程:[%s],时间:[%s],页数:[%s],耗时:[%s]",
+              Thread.currentThread().getName(), date, page, stopWatch.getTotalTimeSeconds()));
+      // 如果重复的数量大于两倍提前结束
+      //      if (count.get() > mobileSet.size() * 4) {
+      //        System.out.println(
+      //            String.format("提前结束。开始写入文件，当前线程:[%s],时间:[%s]", Thread.currentThread().getName(),
+      // date));
+      //        writerToFile(mobileSet, date, countDownLatch);
+      //        break;
+      //      }
+    }
+    if (count.get() <= mobileSet.size() * 3) {
+      System.out.println(
+          String.format("正常结束。开始写入文件，当前线程:[%s],时间:[%s]", Thread.currentThread().getName(), date));
+      writerToFile(mobileSet, date, countDownLatch);
+    }
+  }
+
+  private void writerToFile(Set<String> mobileSet, String date, CountDownLatch countDownLatch) {
     try (BufferedWriter writer =
         new BufferedWriter(new FileWriter(FilePath.getPath(date + ".csv"), true))) {
-      Integer page = 1;
-      List<String> list;
-      while (!(list = getProductCodeList(date, page, pageSize)).isEmpty()) {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        ++page;
-        list.stream()
-            .forEach(
-                productCode -> {
-                  String mobile = getPhoneNumber(productCode);
-                  if (StringUtils.isNotBlank(mobile)) {
-                    mobile = mobile.trim();
-                  }
-                  if (StringUtils.isNotBlank(mobile)
-                      && mobile.length() == 11
-                      && mobile.startsWith("1")) {
-                    try {
-                      writer.write(mobile);
-                      writer.newLine();
-                    } catch (IOException e) {
-                      e.printStackTrace();
-                    }
-                  }
-                });
-        stopWatch.stop();
-        System.out.println(
-            String.format(
-                "当前线程:[%s],时间:[%s],页数:[%s],耗时:[%s]",
-                Thread.currentThread().getName(), date, page, stopWatch.getTotalTimeSeconds()));
-        writer.flush();
-      }
-      System.out.println("结束了: " + date);
-      countDownLatch.countDown();
+      mobileSet.stream()
+          .forEach(
+              mobile -> {
+                try {
+                  writer.write(mobile);
+                  writer.newLine();
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+              });
+      writer.flush();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
+    System.out.println("写入文件结束了: " + date);
+    countDownLatch.countDown();
   }
 
   private HttpHeaders getHttpHeaders(Integer page, String date, Integer pageSize) {
@@ -195,7 +208,8 @@ public class ErlangChaV2 {
     return httpHeaders;
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws ParseException {
+    // 1
     //        String s = "dat_source_type%3D1%26page%3D" + 2 +
     // "%26key%3D83d0ec7c04343a285cad621fa0ddcaea";
     //        List<String> list = new ArrayList<>();
@@ -205,10 +219,16 @@ public class ErlangChaV2 {
     //        }
     //        String result = list.stream().collect(Collectors.joining(","));
     //        System.out.println(DigestUtils.md5Hex(result));
-
-    Integer a = Long.valueOf(new Date().getTime() / 1000).intValue();
-    Integer b = Double.valueOf(Math.random() * 9999).intValue();
-    System.out.println(a);
-    System.out.println(b);
+    // 2
+    //    Integer a = Long.valueOf(new Date().getTime() / 1000).intValue();
+    //    Integer b = Double.valueOf(Math.random() * 9999).intValue();
+    //    System.out.println(a);
+    //    System.out.println(b);
+    // 3
+    String dateStart = "2020-01-01";
+    Date start = DateUtils.parseDate(dateStart, "yyyy-MM-dd");
+    String dateEnd = "2020-05-01";
+    Date end = DateUtils.parseDate(dateEnd, "yyyy-MM-dd");
+    System.out.println(getCount(start, end));
   }
 }
