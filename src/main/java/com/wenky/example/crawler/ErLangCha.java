@@ -93,4 +93,19 @@ public class ErLangCha {
       }
     }
   }
+
+  public static void main(String[] args) {
+    String key = "33e78d60bc1f9dcc7291c891e6f069e4" + "&";
+    String stringToSign =
+        "dat_source_type%3D1"
+            + "%26online_end_time%3D"
+            + "2020-05-01"
+            + "%26online_start_time%3D"
+            + "2020-05-01"
+            + "%26page%3D"
+            + "1"
+            + "%26pageList%3D"
+            + "50";
+    System.out.println(ErlangChaV2.sign(key, stringToSign));
+  }
 }

@@ -60,7 +60,6 @@ public class ShellSort {
   }
 
   public static void main(String[] args) {
-    //    SortUtils.handleSort(ShellSort::sort);
     SortUtils.handleSort(ShellSort::sort);
   }
 

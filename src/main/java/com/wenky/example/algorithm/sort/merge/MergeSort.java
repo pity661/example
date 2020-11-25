@@ -1,5 +1,7 @@
 package com.wenky.example.algorithm.sort.merge;
 
+import com.wenky.example.algorithm.sort.SortUtils;
+
 /**
  * @program: example
  * @description: 1归并排序算法，O(nlogn)
@@ -48,5 +50,9 @@ public class MergeSort {
     for (int i = left; i <= right; i++) {
       array[i] = temp[i];
     }
+  }
+
+  public static void main(String[] args) {
+    SortUtils.handleSort(MergeSort::sort);
   }
 }

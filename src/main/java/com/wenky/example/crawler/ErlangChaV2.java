@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -23,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * @program: example
- * @description:
+ * @description: 破解流程：根据请求头key查询js文件找到方法,读代码看加密流程
  * @author: wenky
  * @email: huwenqi@panda-fintech.com
  * @create: 2020-08-03 18:17
@@ -43,7 +45,7 @@ public class ErlangChaV2 {
             + date
             + "&pageList="
             + pageSize;
-    HttpHeaders httpHeaders = getHttpHeaders(page, date, pageSize);
+    HttpHeaders httpHeaders = getHttpHeaders1(page, date, pageSize);
     HttpEntity httpEntity = new HttpEntity(httpHeaders);
     ResponseEntity<String> response =
         restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
@@ -66,22 +68,73 @@ public class ErlangChaV2 {
     return list;
   }
 
+  private Integer index = 0;
+  // 自动生成user-agent
+  // https://www.tooleyes.com/app/agent_create.html
   public String getPhoneNumber(String productCode) {
-    String url = "https://ec.snssdk.com/product/lubanajaxstaticitem?id=" + productCode;
-    ResponseEntity<String> response =
-        restTemplate.exchange(url, HttpMethod.GET, null, String.class);
-    return Optional.ofNullable(response)
-        .map(ResponseEntity::getBody)
-        .map(JSON::parseObject)
-        .map(json -> json.getJSONObject("data"))
-        .map(json -> json.getString("mobile"))
-        .orElse(null);
+    while (true) {
+      String url = "https://ec.snssdk.com/product/lubanajaxstaticitem?id=" + productCode;
+      String userAgent = UserAgentList.getUserAgentList().get(index);
+      HttpHeaders httpHeader = new HttpHeaders();
+      httpHeader.set("user-agent", userAgent);
+      ResponseEntity<String> response =
+          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(httpHeader), String.class);
+      JSONObject jsonObject =
+          Optional.ofNullable(response)
+              .map(ResponseEntity::getBody)
+              .map(JSON::parseObject)
+              .orElse(new JSONObject());
+      if (jsonObject.isEmpty()) {
+        System.out.println(
+            String.format(
+                "index:[%d], response:[%s], user-agent:[%s]",
+                index, response.getBody(), userAgent));
+        index++;
+        continue;
+      }
+      String mobile =
+          Optional.of(jsonObject)
+              .map(json -> json.getJSONObject("data"))
+              .map(json -> json.getString("mobile"))
+              .get();
+      return mobile;
+    }
+  }
+
+  public Integer getPhoneNumberCount(String productCode) {
+    Integer index = 0;
+    Integer count = 0;
+    while (index < UserAgentList.getUserAgentList().size()) {
+      String url = "https://ec.snssdk.com/product/lubanajaxstaticitem?id=" + productCode;
+      HttpHeaders httpHeader = new HttpHeaders();
+      String userAgent = UserAgentList.getUserAgentList().get(index++);
+      httpHeader.set("user-agent", userAgent);
+      ResponseEntity<String> response =
+          restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(httpHeader), String.class);
+      boolean responseEmpty =
+          Optional.ofNullable(response)
+              .map(ResponseEntity::getBody)
+              .map(JSON::parseObject)
+              .map(JSONObject::isEmpty)
+              .isPresent();
+      String mobile =
+          Optional.ofNullable(response)
+              .map(ResponseEntity::getBody)
+              .map(JSON::parseObject)
+              .map(json -> json.getJSONObject("data"))
+              .map(json -> json.getString("mobile"))
+              .orElse(null);
+      if (responseEmpty && StringUtils.isBlank(mobile)) {
+        count++;
+      }
+    }
+    return count;
   }
 
   public void handle() throws ParseException, InterruptedException {
-    String dateStart = "2020-01-01";
+    String dateStart = "2020-09-01";
     Date start = DateUtils.parseDate(dateStart, "yyyy-MM-dd");
-    String dateEnd = "2020-05-01";
+    String dateEnd = "2020-11-25";
     Date end = DateUtils.parseDate(dateEnd, "yyyy-MM-dd");
     ExecutorService executorService = Executors.newFixedThreadPool(10);
     CountDownLatch countDownLatch = new CountDownLatch(getCount(start, end));
@@ -111,7 +164,6 @@ public class ErlangChaV2 {
     List<String> list;
     AtomicReference<Integer> count = new AtomicReference<>(0);
     while (!(list = getProductCodeList(date, page, pageSize)).isEmpty()) {
-      ++page;
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
       list.stream()
@@ -130,26 +182,22 @@ public class ErlangChaV2 {
       System.out.println(
           String.format(
               "当前线程:[%s],时间:[%s],页数:[%s],耗时:[%s]",
-              Thread.currentThread().getName(), date, page, stopWatch.getTotalTimeSeconds()));
-      // 如果重复的数量大于两倍提前结束
-      //      if (count.get() > mobileSet.size() * 4) {
-      //        System.out.println(
-      //            String.format("提前结束。开始写入文件，当前线程:[%s],时间:[%s]", Thread.currentThread().getName(),
-      // date));
-      //        writerToFile(mobileSet, date, countDownLatch);
-      //        break;
-      //      }
+              Thread.currentThread().getName(), date, page++, stopWatch.getTotalTimeSeconds()));
+      if (page > 200) {
+        System.out.println(
+            String.format("超过200页不再处理。当前线程:[%s],时间:[%s]", Thread.currentThread().getName(), date));
+        break;
+      }
     }
-    if (count.get() <= mobileSet.size() * 3) {
-      System.out.println(
-          String.format("正常结束。开始写入文件，当前线程:[%s],时间:[%s]", Thread.currentThread().getName(), date));
-      writerToFile(mobileSet, date, countDownLatch);
-    }
+    System.out.println(String.format("开始写入文件, size:[%s]", mobileSet.size()));
+    writerToFile(mobileSet, date, countDownLatch);
+    System.out.println(
+        String.format("写入文件完成，当前线程:[%s],时间:[%s]", Thread.currentThread().getName(), date));
   }
 
   private void writerToFile(Set<String> mobileSet, String date, CountDownLatch countDownLatch) {
     try (BufferedWriter writer =
-        new BufferedWriter(new FileWriter(FilePath.getPath(date + ".csv"), true))) {
+        new BufferedWriter(new FileWriter(FilePath.getDesktopPath(date + ".csv"), true))) {
       mobileSet.stream()
           .forEach(
               mobile -> {
@@ -168,15 +216,44 @@ public class ErlangChaV2 {
     countDownLatch.countDown();
   }
 
+  private HttpHeaders getHttpHeaders1(Integer page, String date, Integer pageSize) {
+    String csrf = "cabbd66dd58ccf36c5e3119685ef39eb";
+    String key = "33e78d60bc1f9dcc7291c891e6f069e4";
+    String s =
+        "dat_source_type%3D1"
+            + "%26online_end_time%3D"
+            + date
+            + "%26online_start_time%3D"
+            + date
+            + "%26page%3D"
+            + page
+            + "%26pageList%3D"
+            + pageSize;
+    Integer a = Long.valueOf(new Date().getTime() / 1000).intValue();
+    Integer b = Double.valueOf(Math.random() * 9999).intValue();
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.set("Keep-Mt", b.toString());
+    httpHeaders.set("Keep-At", a.toString());
+    httpHeaders.set("Csrf-Sign", DigestUtils.md5Hex(b.toString() + a.toString() + csrf));
+    httpHeaders.set("Keep-Csrf", csrf);
+    httpHeaders.set("X-Content-Type", "application/json;" + sign(key + "&", s));
+    return httpHeaders;
+  }
+
+  public static String sign(String accessSecret, String stringToSign) {
+    try {
+      Mac mac = Mac.getInstance("HmacSHA1");
+      mac.init(new SecretKeySpec(accessSecret.getBytes(), "HmacSHA1"));
+      byte[] signData = mac.doFinal(stringToSign.getBytes());
+      return Base64.getEncoder().encodeToString(signData);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
   private HttpHeaders getHttpHeaders(Integer page, String date, Integer pageSize) {
     String csrf = "cabbd66dd58ccf36c5e3119685ef39eb";
     String KEY = "83d0ec7c04343a285cad621fa0ddcaea";
-    // "dat_source_type%3D1
-    // %26online_end_time%3D2020-08-01
-    // %26online_start_time%3D2020-08-01
-    // %26page%3D3
-    // %26pageList%3D50
-    // %26key%3D83d0ec7c04343a285cad621fa0ddcaea"
     String s =
         "dat_source_type%3D1"
             + "%26online_end_time%3D"
@@ -195,10 +272,8 @@ public class ErlangChaV2 {
       list.add(String.valueOf(value));
     }
     String result = list.stream().collect(Collectors.joining(","));
-
     Integer a = Long.valueOf(new Date().getTime() / 1000).intValue();
     Integer b = Double.valueOf(Math.random() * 9999).intValue();
-
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.set("Keep-Mt", b.toString());
     httpHeaders.set("Keep-At", a.toString());
@@ -227,8 +302,24 @@ public class ErlangChaV2 {
     // 3
     String dateStart = "2020-01-01";
     Date start = DateUtils.parseDate(dateStart, "yyyy-MM-dd");
-    String dateEnd = "2020-05-01";
-    Date end = DateUtils.parseDate(dateEnd, "yyyy-MM-dd");
-    System.out.println(getCount(start, end));
+    start = null;
+
+    StringBuilder stringBuilder = new StringBuilder().append("胡").append("文").append("琦");
+    String a = stringBuilder.toString();
+    String b = a.intern();
+    String c = "胡文琦";
+    System.out.println(String.format("a == b is %s", a == b));
+    System.out.println(String.format("a == c is %s", a == c));
+    a = null;
+    b = null;
+    System.gc();
+    a = stringBuilder.toString();
+    b = "胡文琦";
+    System.out.println(String.format("a == c is %s", a == c));
+    System.out.println(String.format("a == b is %s", a == b));
+    System.out.println(String.format("b == c is %s", b == c));
+    //    String dateEnd = "2020-05-01";
+    //    Date end = DateUtils.parseDate(dateEnd, "yyyy-MM-dd");
+    //    System.out.println(getCount(start, end));
   }
 }

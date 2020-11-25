@@ -33,4 +33,9 @@ class ErLangChaTest {
   public void test3() throws ParseException, InterruptedException {
     erlangChaV2.handle();
   }
+
+  @Test
+  public void getPhoneNumberTest() {
+    System.out.println(erlangChaV2.getPhoneNumberCount("3447250302150026935"));
+  }
 }

@@ -51,8 +51,10 @@ public class QuickSort {
   }
 
   public static void main(String[] args) {
-    int[] a = {6, 1, 5, 4, 3, 7};
-    sort(a);
-    SortUtils.println(a);
+    //    int[] a = {6, 1, 5, 4, 3, 7};
+    //    sort(a);
+    //    SortUtils.println(a);
+
+    SortUtils.handleSort(QuickSort::sort);
   }
 }

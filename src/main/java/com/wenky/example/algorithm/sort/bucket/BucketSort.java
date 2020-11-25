@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @program: example
@@ -32,10 +33,9 @@ public class BucketSort {
     int max = getTheLimit(array, (a, b) -> a > b);
     // 桶的个数
     int count = (max - min) / gap + 1;
-    List<List<Integer>> bucketList = new ArrayList<>(count);
-    for (int i = 0; i < count; i++) {
-      bucketList.add(new ArrayList());
-    }
+    // 生成指定数量的桶
+    List<List<Integer>> bucketList =
+        Stream.generate(() -> new ArrayList<Integer>()).limit(count).collect(Collectors.toList());
     // 把所有待排序元素分散到桶中
     for (int i = 0; i < array.length; i++) {
       bucketList.get((array[i] - min) / gap).add(array[i]);
@@ -47,9 +47,7 @@ public class BucketSort {
             .collect(Collectors.toList());
     sortedList.forEach(InsertSort::sort);
     List<Integer> result =
-        sortedList.stream()
-            .flatMap(arr -> IntStream.of(arr).mapToObj(Integer::new))
-            .collect(Collectors.toList());
+        sortedList.stream().flatMap(arr -> IntStream.of(arr).boxed()).collect(Collectors.toList());
     // return时使用
     // array = result.stream().mapToInt(Integer::intValue).toArray();
     for (int i = 0; i < array.length; i++) {
@@ -57,6 +55,7 @@ public class BucketSort {
     }
   }
 
+  // 找到最大值和最小值
   private static int getTheLimit(int[] array, BiPredicate<Integer, Integer> predicate) {
     int limit = array[0];
     for (int i = 1; i < array.length; i++) {

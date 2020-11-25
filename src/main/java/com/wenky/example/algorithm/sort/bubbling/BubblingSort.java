@@ -1,5 +1,7 @@
 package com.wenky.example.algorithm.sort.bubbling;
 
+import com.wenky.example.algorithm.sort.SortUtils;
+
 /**
  * @program: example
  * @description: 1冒泡排序
@@ -18,11 +20,16 @@ public class BubblingSort {
     for (int i = 0; i < array.length; ++i) {
       for (int j = i; j < array.length; j++) {
         if (array[i] > array[j]) {
+          // 使用异或运算交换数组的值
           array[i] = array[i] ^ array[j];
           array[j] = array[j] ^ array[i];
           array[i] = array[i] ^ array[j];
         }
       }
     }
+  }
+
+  public static void main(String[] args) {
+    SortUtils.handleSort(BubblingSort::sort);
   }
 }

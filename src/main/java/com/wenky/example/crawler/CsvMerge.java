@@ -21,15 +21,15 @@ import org.springframework.stereotype.Component;
 public class CsvMerge {
 
   public void mergeFile() throws ParseException, IOException {
-    String dateStart = "2020-01-01";
-    String dateEnd = "2020-05-01";
+    String dateStart = "2020-09-01";
+    String dateEnd = "2020-11-25";
     Date start = DateUtils.parseDate(dateStart, "yyyy-MM-dd");
     Date end = DateUtils.parseDate(dateEnd, "yyyy-MM-dd");
     Set<String> allMobileSet = new HashSet<>();
     String line;
     BufferedReader reader;
     while (start.before(end)) {
-      String targetFile = "/Users/huwenqi/Desktop/csv/";
+      String targetFile = "/Users/huwenqi/Desktop/erlang/";
       String fileName = targetFile + DateFormatUtils.format(start, "yyyy-MM-dd") + ".csv";
       System.out.println(fileName);
       try {
@@ -47,7 +47,9 @@ public class CsvMerge {
       start = DateUtils.addDays(start, 1);
     }
     try (BufferedWriter writer =
-        new BufferedWriter(new FileWriter(FilePath.getPath("merge.csv"), true))) {
+        new BufferedWriter(
+            new FileWriter(
+                FilePath.getDesktopPath("归并" + dateStart + "至" + dateEnd + ".csv"), true))) {
       allMobileSet.stream()
           .forEach(
               mobile -> {

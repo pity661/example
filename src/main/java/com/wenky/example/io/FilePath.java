@@ -13,4 +13,8 @@ public class FilePath {
   public static String getPath(String fileName) {
     return ClassLoader.getSystemResource("static").getPath() + File.separator + fileName;
   }
+
+  public static String getDesktopPath(String fileName) {
+    return "/Users/huwenqi/Desktop/erlang/" + fileName;
+  }
 }

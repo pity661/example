@@ -17,10 +17,15 @@ public class SortUtils {
 
   public static final int[] a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-  public static void main(String[] args) {
-    shuffle(a);
+  // 用指定排序算法处理
+  public static void handleSort(Consumer<int[]> consumer) {
+    int[] a = shuffle(SortUtils.a);
+    SortUtils.println(a);
+    consumer.accept(a);
+    SortUtils.println(a);
   }
 
+  // 随机打乱数组
   public static int[] shuffle(int[] a) {
     List<Integer> list = IntStream.of(a).mapToObj(Integer::new).collect(Collectors.toList());
     Collections.shuffle(list);
@@ -28,14 +33,8 @@ public class SortUtils {
     return a;
   }
 
+  // 打印数组
   public static void println(int[] a) {
     System.out.println(IntStream.of(a).mapToObj(String::valueOf).collect(Collectors.joining(" ")));
-  }
-
-  public static void handleSort(Consumer<int[]> consumer) {
-    int[] a = SortUtils.shuffle(SortUtils.a);
-    SortUtils.println(a);
-    consumer.accept(a);
-    SortUtils.println(a);
   }
 }
