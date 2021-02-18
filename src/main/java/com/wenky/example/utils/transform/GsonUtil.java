@@ -25,7 +25,7 @@ public class GsonUtil {
           // null属性也会保留
           .serializeNulls()
           // 字符串格式化输出
-          //              .setPrettyPrinting()
+          .setPrettyPrinting()
           .create();
   public static final Gson GSON_UNDERLINE =
       new GsonBuilder()

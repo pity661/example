@@ -34,7 +34,7 @@ public class FileRead {
     }
   }
 
-  private static List<List<String>> readSheet(Sheet sheet) {
+  public static List<List<String>> readSheet(Sheet sheet) {
     List<List<String>> result = new ArrayList<>();
     List<String> rowList;
     for (int i = 2; i <= sheet.getLastRowNum(); i++) {

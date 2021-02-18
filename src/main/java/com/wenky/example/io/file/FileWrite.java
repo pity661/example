@@ -16,6 +16,7 @@ public class FileWrite {
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
       writer.write("aaa");
       writer.newLine();
+      writer.write("bbb");
     }
   }
 
@@ -27,7 +28,7 @@ public class FileWrite {
   }
 
   public static void main(String[] args) throws IOException {
-    //        appendTest();
-    outPutStream();
+    appendTest();
+    //    outPutStream();
   }
 }
