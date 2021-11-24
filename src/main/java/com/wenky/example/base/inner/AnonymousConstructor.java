@@ -41,6 +41,12 @@ public class AnonymousConstructor {
     };
   }
 
+  /**
+   * AnonymousConstructor instance AnonymousConstructor constructor Base instance Base constructor,
+   * i = 2 getBase instance In anonymous f()
+   *
+   * @param args
+   */
   public static void main(String[] args) {
     Base base = new AnonymousConstructor().getBase(2);
     base.f();

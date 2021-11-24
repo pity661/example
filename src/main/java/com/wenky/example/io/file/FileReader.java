@@ -13,13 +13,14 @@ public class FileReader {
   public static String fileName = "/Users/huwenqi/Desktop/file.txt";
 
   public static void readLine() throws IOException {
-    BufferedReader reader = new BufferedReader(new java.io.FileReader(fileName));
-    String line;
-    System.out.println("start");
-    while ((line = reader.readLine()) != null) {
-      System.out.println(line);
+    try (BufferedReader reader = new BufferedReader(new java.io.FileReader(fileName))) {
+      String line;
+      System.out.println("start");
+      while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+      }
+      System.out.println("end");
     }
-    System.out.println("end");
   }
 
   public static void main(String[] args) throws IOException {

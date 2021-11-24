@@ -73,6 +73,24 @@ public class ChannelTest {
     }
   }
 
+  //  public static void stringTest() throws IOException {
+  //    String text = "012345678";
+  ////    StringReader stringReader = new StringReader(text);
+  //    try (ByteArrayInputStream inputStream = new
+  // ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))) {
+  //      try (GatheringByteChannel channel =
+  //                   new
+  // FileOutputStream(FilePath.getPath("channel-string-gather.txt")).getChannel()) {
+  //        ByteBuffer[] byteBuffers = {ByteBuffer.allocate(5), ByteBuffer.allocate(2)};
+  //
+  //        while (inputStream.read(byteBuffers) > 0) {
+  //
+  //        }
+  //      }
+  //    }
+  //    ByteBuffer[] byteBuffers = {ByteBuffer.allocate(5), ByteBuffer.allocate(2)};
+  //  }
+
   public static void gatherTest() throws IOException {
     List<ByteBuffer> list = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
@@ -81,22 +99,25 @@ public class ChannelTest {
       byteBuffer.flip();
       list.add(byteBuffer);
     }
+    // 目标文件地址：
+    // /Users/huwenqi/Documents/wenky/java/example/out/production/resources/static/channel-gather.txt
     try (GatheringByteChannel channel =
         new FileOutputStream(FilePath.getPath("channel-gather.txt")).getChannel()) {
-      channel.write(list.toArray(new ByteBuffer[list.size()]));
+      ByteBuffer[] byteBuffers = list.toArray(new ByteBuffer[list.size()]);
+      while (channel.write(byteBuffers) > 0) {}
     }
   }
 
   /** @throws IOException */
   public static void scatterTest() throws IOException {
-    try (ScatteringByteChannel channel =
+    try (ScatteringByteChannel inChannel =
         new FileInputStream(FilePath.getPath("channel-gather.txt")).getChannel()) {
       // 这里注意outChannel必须定义在read方法外面
-      try (WritableByteChannel channel1 = Channels.newChannel(System.out)) {
+      try (WritableByteChannel outChannel = Channels.newChannel(System.out)) {
         ByteBuffer[] byteBuffers = {ByteBuffer.allocate(5), ByteBuffer.allocate(2)};
         long number;
         // 当文件读取position的值达到了文件大小时，会返回文件尾条件值 -1
-        while ((number = channel.read(byteBuffers)) != -1) {
+        while ((number = inChannel.read(byteBuffers)) != -1) {
           System.out.println("读取成功:" + number);
           Stream.of(byteBuffers)
               .forEach(
@@ -105,7 +126,7 @@ public class ChannelTest {
                     try {
                       // 不能确定channel.write()能一次性写入buffer的所有数据
                       while (byteBuffer.hasRemaining()) {
-                        channel1.write(byteBuffer);
+                        outChannel.write(byteBuffer);
                       }
                     } catch (IOException e) {
                       e.printStackTrace();
@@ -120,8 +141,8 @@ public class ChannelTest {
 
   public static void main(String[] args) throws IOException {
     //    fileChannelCopy1();
-    channelTransfer();
-    //    gatherTest();
-    //    scatterTest();
+    //    channelTransfer();
+    //        gatherTest();
+    scatterTest();
   }
 }

@@ -19,6 +19,7 @@ public class Randoms {
         .ints(5, 20)
         .distinct()
         .limit(10)
+        .sorted()
         //        .mapToObj(Integer::valueOf)
         .boxed()
         .collect(Collectors.toList());

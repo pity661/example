@@ -5,7 +5,7 @@ import java.io.*;
 
 /**
  * @program: example
- * @description:
+ * @description: BufferedReader::readLine
  * @author: wenky
  * @email: huwenqi@panda-fintech.com
  * @create: 2020-03-26 18:27

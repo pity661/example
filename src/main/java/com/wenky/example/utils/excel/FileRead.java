@@ -4,10 +4,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 
 /**
  * @program: example
@@ -37,12 +34,15 @@ public class FileRead {
   public static List<List<String>> readSheet(Sheet sheet) {
     List<List<String>> result = new ArrayList<>();
     List<String> rowList;
-    for (int i = 2; i <= sheet.getLastRowNum(); i++) {
+    for (int i = 1; i <= sheet.getLastRowNum(); i++) {
       rowList = new ArrayList<>();
       Row row = sheet.getRow(i);
       Iterator iterator = row.cellIterator();
       while (iterator.hasNext()) {
-        rowList.add(iterator.next().toString());
+        Object o = iterator.next();
+        // 防止读取excel数字列时变成科学技术法
+        ((Cell) o).setCellType(CellType.STRING);
+        rowList.add(o.toString());
       }
       result.add(rowList);
     }
