@@ -12,22 +12,22 @@ import java.util.stream.Stream;
  */
 public class FileType {
 
-  public static void tt() {
-    String fileName = "/Users/huwenqi";
-    File file = new File(fileName);
-    Stream.of(file.listFiles())
-        .forEach(
-            f -> {
-              if (f.isDirectory()) {
-                System.out.println("我是个文件夹" + f.getName());
-              }
-              if (f.isFile()) {
-                System.out.println("我是个文件" + f.getName());
-              }
-            });
-  }
+    public static void tt() {
+        String fileName = "/Users/huwenqi";
+        File file = new File(fileName);
+        Stream.of(file.listFiles())
+                .forEach(
+                        f -> {
+                            if (f.isDirectory()) {
+                                System.out.println("我是个文件夹" + f.getName());
+                            }
+                            if (f.isFile()) {
+                                System.out.println("我是个文件" + f.getName());
+                            }
+                        });
+    }
 
-  public static void main(String[] args) {
-    tt();
-  }
+    public static void main(String[] args) {
+        tt();
+    }
 }

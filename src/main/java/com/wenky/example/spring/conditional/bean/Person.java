@@ -8,22 +8,22 @@ package com.wenky.example.spring.conditional.bean;
  * @create: 2020-04-08 11:09
  */
 public class Person {
-  private String name;
+    private String name;
 
-  public Person(String s) {
-    this.name = s;
-  }
+    public Person(String s) {
+        this.name = s;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  @Override
-  public String toString() {
-    return "Person{" + "name='" + name + '\'' + '}';
-  }
+    @Override
+    public String toString() {
+        return "Person{" + "name='" + name + '\'' + '}';
+    }
 }

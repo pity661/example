@@ -12,8 +12,8 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @create: 2020-04-08 11:23
  */
 public class FalseCondition implements Condition {
-  @Override
-  public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-    return false;
-  }
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        return false;
+    }
 }

@@ -10,22 +10,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class AppGrowingTest {
-  @Autowired private AppGrowing appGrowing;
+    @Autowired private AppGrowing appGrowing;
 
-  @Test
-  public void fetchIdList() {
-    List<String> list = appGrowing.fetchIdList(1, 2);
-    System.out.println(list);
-  }
+    @Test
+    public void fetchIdList() {
+        List<String> list = appGrowing.fetchIdList(1, 2);
+        System.out.println(list);
+    }
 
-  @Test
-  public void fetchRedirectUrl() {
-    String url = appGrowing.fetchRedirectUrl("5e3072dfae743a3a865707ef8168cf23");
-    System.out.println(url);
-  }
+    @Test
+    public void fetchRedirectUrl() {
+        String url = appGrowing.fetchRedirectUrl("5e3072dfae743a3a865707ef8168cf23");
+        System.out.println(url);
+    }
 
-  @Test
-  public void handle() throws IOException, InterruptedException {
-    appGrowing.handle();
-  }
+    @Test
+    public void handle() throws IOException, InterruptedException {
+        appGrowing.handle();
+    }
 }

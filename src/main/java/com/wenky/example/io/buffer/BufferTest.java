@@ -12,18 +12,18 @@ import java.io.*;
  */
 public class BufferTest {
 
-  public static void bufferedWriter() throws IOException {
-    try (BufferedWriter writer =
-        new BufferedWriter(new FileWriter(FilePath.getPath("buffer.txt")))) {
-      writer.newLine();
-      String value = "123";
-      writer.write(value, 0, value.length());
-      writer.newLine();
-      writer.flush();
+    public static void bufferedWriter() throws IOException {
+        try (BufferedWriter writer =
+                new BufferedWriter(new FileWriter(FilePath.getPath("buffer.txt")))) {
+            writer.newLine();
+            String value = "123";
+            writer.write(value, 0, value.length());
+            writer.newLine();
+            writer.flush();
+        }
     }
-  }
 
-  public static void main(String[] args) throws IOException {
-    bufferedWriter();
-  }
+    public static void main(String[] args) throws IOException {
+        bufferedWriter();
+    }
 }

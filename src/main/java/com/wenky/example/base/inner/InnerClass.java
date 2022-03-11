@@ -8,46 +8,46 @@ package com.wenky.example.base.inner;
  * @create: 2020-10-21 10:14
  */
 public class InnerClass {
-  private int count = 0;
+    private int count = 0;
 
-  Counter getCounter1(final String name) {
-    class LocalCounter implements Counter {
-      LocalCounter() {
-        System.out.println("LocalCounter()");
-      }
+    Counter getCounter1(final String name) {
+        class LocalCounter implements Counter {
+            LocalCounter() {
+                System.out.println("LocalCounter()");
+            }
 
-      @Override
-      public int next() {
-        System.out.print(name);
-        return count++;
-      }
+            @Override
+            public int next() {
+                System.out.print(name);
+                return count++;
+            }
+        }
+        return new LocalCounter();
     }
-    return new LocalCounter();
-  }
 
-  Counter getCounter2(String name) {
-    return new Counter() {
-      {
-        System.out.println("Counter()");
-      }
+    Counter getCounter2(String name) {
+        return new Counter() {
+            {
+                System.out.println("Counter()");
+            }
 
-      @Override
-      public int next() {
-        System.out.print(name);
-        return count++;
-      }
-    };
-  }
-
-  public static void main(String[] args) {
-    InnerClass innerClass = new InnerClass();
-    Counter counter1 = innerClass.getCounter1("counter1 "),
-        counter2 = innerClass.getCounter2("counter2 ");
-    for (int i = 0; i < 5; i++) {
-      System.out.println(counter1.next());
+            @Override
+            public int next() {
+                System.out.print(name);
+                return count++;
+            }
+        };
     }
-    for (int i = 0; i < 5; i++) {
-      System.out.println(counter2.next());
+
+    public static void main(String[] args) {
+        InnerClass innerClass = new InnerClass();
+        Counter counter1 = innerClass.getCounter1("counter1 "),
+                counter2 = innerClass.getCounter2("counter2 ");
+        for (int i = 0; i < 5; i++) {
+            System.out.println(counter1.next());
+        }
+        for (int i = 0; i < 5; i++) {
+            System.out.println(counter2.next());
+        }
     }
-  }
 }

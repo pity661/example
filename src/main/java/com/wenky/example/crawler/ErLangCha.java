@@ -26,86 +26,86 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class ErLangCha {
 
-  @Autowired private RestTemplate restTemplate;
+    @Autowired private RestTemplate restTemplate;
 
-  public List<String> getProductCodeList(Integer page, Integer pageSize) {
-    String url =
-        "https://www.erlangcha.com/api/list?page="
-            + page
-            + "&pageList="
-            + pageSize
-            + "&dat_source_type=1";
-    ResponseEntity<String> response =
-        restTemplate.exchange(url, HttpMethod.GET, null, String.class);
-    return Optional.ofNullable(response)
-        .map(ResponseEntity::getBody)
-        .map(JSON::parseObject)
-        .map(json -> json.getJSONObject("data"))
-        .map(jsonObject -> jsonObject.getJSONArray("content"))
-        .map(
-            array ->
-                array.stream()
-                    .map(json -> ((JSONObject) json).getString("product_code"))
-                    .collect(Collectors.toList()))
-        .orElse(null);
-  }
-
-  public String getPhoneNumber(String productCode) {
-    String url = "https://ec.snssdk.com/product/lubanajaxstaticitem?id=" + productCode;
-    ResponseEntity<String> response =
-        restTemplate.exchange(url, HttpMethod.GET, null, String.class);
-    return Optional.ofNullable(response)
-        .map(ResponseEntity::getBody)
-        .map(JSON::parseObject)
-        .map(json -> json.getJSONObject("data"))
-        .map(json -> json.getString("mobile"))
-        .orElse(null);
-  }
-
-  public void handle() throws IOException, InterruptedException {
-    try (BufferedWriter writer =
-        new BufferedWriter(new FileWriter(FilePath.getPath("2020-04-14.csv"), true))) {
-      Integer page = 958;
-      Integer pageSize = 200;
-      List<String> list;
-      while (!(list = getProductCodeList(page, pageSize)).isEmpty()) {
-        System.out.println("page:" + page);
-        ++page;
-        list.stream()
-            .forEach(
-                productCode -> {
-                  String mobile = getPhoneNumber(productCode);
-                  if (StringUtils.isNotBlank(mobile)) {
-                    mobile = mobile.trim();
-                  }
-                  if (StringUtils.isNotBlank(mobile)
-                      && mobile.length() == 11
-                      && mobile.startsWith("1")) {
-                    try {
-                      writer.write(mobile);
-                      writer.newLine();
-                    } catch (IOException e) {
-                      e.printStackTrace();
-                    }
-                  }
-                });
-        writer.flush();
-      }
+    public List<String> getProductCodeList(Integer page, Integer pageSize) {
+        String url =
+                "https://www.erlangcha.com/api/list?page="
+                        + page
+                        + "&pageList="
+                        + pageSize
+                        + "&dat_source_type=1";
+        ResponseEntity<String> response =
+                restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+        return Optional.ofNullable(response)
+                .map(ResponseEntity::getBody)
+                .map(JSON::parseObject)
+                .map(json -> json.getJSONObject("data"))
+                .map(jsonObject -> jsonObject.getJSONArray("content"))
+                .map(
+                        array ->
+                                array.stream()
+                                        .map(json -> ((JSONObject) json).getString("product_code"))
+                                        .collect(Collectors.toList()))
+                .orElse(null);
     }
-  }
 
-  public static void main(String[] args) {
-    String key = "33e78d60bc1f9dcc7291c891e6f069e4" + "&";
-    String stringToSign =
-        "dat_source_type%3D1"
-            + "%26online_end_time%3D"
-            + "2020-05-01"
-            + "%26online_start_time%3D"
-            + "2020-05-01"
-            + "%26page%3D"
-            + "1"
-            + "%26pageList%3D"
-            + "50";
-    System.out.println(ErlangChaV2.sign(key, stringToSign));
-  }
+    public String getPhoneNumber(String productCode) {
+        String url = "https://ec.snssdk.com/product/lubanajaxstaticitem?id=" + productCode;
+        ResponseEntity<String> response =
+                restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+        return Optional.ofNullable(response)
+                .map(ResponseEntity::getBody)
+                .map(JSON::parseObject)
+                .map(json -> json.getJSONObject("data"))
+                .map(json -> json.getString("mobile"))
+                .orElse(null);
+    }
+
+    public void handle() throws IOException, InterruptedException {
+        try (BufferedWriter writer =
+                new BufferedWriter(new FileWriter(FilePath.getPath("2020-04-14.csv"), true))) {
+            Integer page = 958;
+            Integer pageSize = 200;
+            List<String> list;
+            while (!(list = getProductCodeList(page, pageSize)).isEmpty()) {
+                System.out.println("page:" + page);
+                ++page;
+                list.stream()
+                        .forEach(
+                                productCode -> {
+                                    String mobile = getPhoneNumber(productCode);
+                                    if (StringUtils.isNotBlank(mobile)) {
+                                        mobile = mobile.trim();
+                                    }
+                                    if (StringUtils.isNotBlank(mobile)
+                                            && mobile.length() == 11
+                                            && mobile.startsWith("1")) {
+                                        try {
+                                            writer.write(mobile);
+                                            writer.newLine();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                writer.flush();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String key = "33e78d60bc1f9dcc7291c891e6f069e4" + "&";
+        String stringToSign =
+                "dat_source_type%3D1"
+                        + "%26online_end_time%3D"
+                        + "2020-05-01"
+                        + "%26online_start_time%3D"
+                        + "2020-05-01"
+                        + "%26page%3D"
+                        + "1"
+                        + "%26pageList%3D"
+                        + "50";
+        System.out.println(ErlangChaV2.sign(key, stringToSign));
+    }
 }

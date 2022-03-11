@@ -16,19 +16,19 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  */
 // 设置 VM options: -Dos.name=windows
 public class WindowsCondition implements Condition {
-  @Override
-  public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-    // ioc使用的beanFactory
-    ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-    // 类加载器
-    ClassLoader classLoader = context.getClassLoader();
-    // 当前环境信息
-    Environment environment = context.getEnvironment();
-    // bean定义的注册类
-    BeanDefinitionRegistry registry = context.getRegistry();
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        // ioc使用的beanFactory
+        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+        // 类加载器
+        ClassLoader classLoader = context.getClassLoader();
+        // 当前环境信息
+        Environment environment = context.getEnvironment();
+        // bean定义的注册类
+        BeanDefinitionRegistry registry = context.getRegistry();
 
-    // 获取当前系统名
-    String property = environment.getProperty("os.name").toUpperCase();
-    return property.contains("WINDOWS");
-  }
+        // 获取当前系统名
+        String property = environment.getProperty("os.name").toUpperCase();
+        return property.contains("WINDOWS");
+    }
 }

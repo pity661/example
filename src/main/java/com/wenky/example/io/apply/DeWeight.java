@@ -11,13 +11,13 @@ import java.io.*;
  * @create: 2020-03-26 18:27
  */
 public class DeWeight {
-  private static final Integer fileCount = 20;
-  private static final String file = FilePath.getPath("111.txt");
+    private static final Integer fileCount = 20;
+    private static final String file = FilePath.getPath("111.txt");
 
-  public static void separateLargeFiles() throws IOException {
-    try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-      String line;
-      while ((line = bufferedReader.readLine()) != null) {}
+    public static void separateLargeFiles() throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {}
+        }
     }
-  }
 }

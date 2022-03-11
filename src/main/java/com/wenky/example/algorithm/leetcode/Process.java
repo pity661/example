@@ -9,5 +9,5 @@ package com.wenky.example.algorithm.leetcode;
  */
 public class Process {
 
-  public static void main(String[] args) {}
+    public static void main(String[] args) {}
 }

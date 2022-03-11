@@ -13,11 +13,11 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @create: 2020-04-08 11:17
  */
 public class LinuxCondition implements Condition {
-  @Override
-  public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-    Environment environment = context.getEnvironment();
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+        Environment environment = context.getEnvironment();
 
-    String property = environment.getProperty("os.name").toUpperCase();
-    return property.contains("LINUX") || property.contains("MAC");
-  }
+        String property = environment.getProperty("os.name").toUpperCase();
+        return property.contains("LINUX") || property.contains("MAC");
+    }
 }

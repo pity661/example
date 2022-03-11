@@ -13,10 +13,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @create: 2020-04-08 11:12
  */
 public class BeanTest {
-  public static void main(String[] args) {
-    AnnotationConfigApplicationContext applicationContext =
-        new AnnotationConfigApplicationContext(BeanConfig.class);
-    Map<String, Person> map = applicationContext.getBeansOfType(Person.class);
-    System.out.println(map);
-  }
+    public static void main(String[] args) {
+        AnnotationConfigApplicationContext applicationContext =
+                new AnnotationConfigApplicationContext(BeanConfig.class);
+        Map<String, Person> map = applicationContext.getBeansOfType(Person.class);
+        System.out.println(map);
+    }
 }

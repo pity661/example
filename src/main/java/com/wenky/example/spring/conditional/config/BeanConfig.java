@@ -19,20 +19,20 @@ import org.springframework.context.annotation.Configuration;
 // @Conditional({LinuxCondition.class})
 @Configuration
 public class BeanConfig {
-  ScanConfig scanConfig;
-  // xxx 1
-  @Conditional({WindowsCondition.class})
-  @Bean(name = "xxx")
-  public Person person1() {
-    return new Person("windows");
-  }
+    ScanConfig scanConfig;
+    // xxx 1
+    @Conditional({WindowsCondition.class})
+    @Bean(name = "xxx")
+    public Person person1() {
+        return new Person("windows");
+    }
 
-  // xxx 1
-  @Conditional({LinuxCondition.class})
-  // xxx 3
-  // @Conditional({LinuxCondition.class, FalseCondition.class})
-  @Bean(name = "sss")
-  public Person person2() {
-    return new Person("linux");
-  }
+    // xxx 1
+    @Conditional({LinuxCondition.class})
+    // xxx 3
+    // @Conditional({LinuxCondition.class, FalseCondition.class})
+    @Bean(name = "sss")
+    public Person person2() {
+        return new Person("linux");
+    }
 }

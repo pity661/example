@@ -8,47 +8,47 @@ package com.wenky.example.base.inner;
  * @create: 2020-10-21 10:57
  */
 public class AnonymousConstructor {
-  {
-    System.out.println("AnonymousConstructor instance");
-  }
-
-  AnonymousConstructor() {
-    System.out.println("AnonymousConstructor constructor");
-  }
-
-  abstract class Base {
     {
-      System.out.println("Base instance");
+        System.out.println("AnonymousConstructor instance");
     }
 
-    Base(int i) {
-      System.out.println("Base constructor, i = " + i);
+    AnonymousConstructor() {
+        System.out.println("AnonymousConstructor constructor");
     }
 
-    public abstract void f();
-  }
+    abstract class Base {
+        {
+            System.out.println("Base instance");
+        }
 
-  public Base getBase(int i) {
-    return new Base(i) {
-      {
-        System.out.println("getBase instance");
-      }
+        Base(int i) {
+            System.out.println("Base constructor, i = " + i);
+        }
 
-      @Override
-      public void f() {
-        System.out.println("In anonymous f()");
-      }
-    };
-  }
+        public abstract void f();
+    }
 
-  /**
-   * AnonymousConstructor instance AnonymousConstructor constructor Base instance Base constructor,
-   * i = 2 getBase instance In anonymous f()
-   *
-   * @param args
-   */
-  public static void main(String[] args) {
-    Base base = new AnonymousConstructor().getBase(2);
-    base.f();
-  }
+    public Base getBase(int i) {
+        return new Base(i) {
+            {
+                System.out.println("getBase instance");
+            }
+
+            @Override
+            public void f() {
+                System.out.println("In anonymous f()");
+            }
+        };
+    }
+
+    /**
+     * AnonymousConstructor instance AnonymousConstructor constructor Base instance Base
+     * constructor, i = 2 getBase instance In anonymous f()
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        Base base = new AnonymousConstructor().getBase(2);
+        base.f();
+    }
 }

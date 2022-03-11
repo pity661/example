@@ -11,10 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class CsvMergeTest {
 
-  @Autowired private CsvMerge csvMerge;
+    @Autowired private CsvMerge csvMerge;
 
-  @Test
-  public void test() throws IOException, ParseException {
-    csvMerge.mergeFile();
-  }
+    @Test
+    public void test() throws IOException, ParseException {
+        csvMerge.mergeFile();
+    }
 }

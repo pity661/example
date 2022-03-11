@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class UserAgentList {
 
-  public static List<String> getUserAgentList() {
-    return Collections.emptyList();
-  }
+    public static List<String> getUserAgentList() {
+        return Collections.emptyList();
+    }
 }

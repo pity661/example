@@ -19,20 +19,21 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 public class ConfigTest {
-  @Autowired private FactoryConfig factoryConfig;
-  @Autowired private ScanConfig scanConfig;
-  @Autowired private Wenky wenky;
-  @Autowired private WenkyProperties properties;
+    @Autowired private FactoryConfig factoryConfig;
+    @Autowired private ScanConfig scanConfig;
+    @Autowired private Wenky wenky;
+    @Autowired private WenkyProperties properties;
 
-  @Test
-  public void test() {
-    System.out.println(Optional.ofNullable(factoryConfig).map(FactoryConfig::getName).orElse(null));
-    System.out.println(Optional.ofNullable(scanConfig).map(ScanConfig::getName).orElse(null));
-  }
+    @Test
+    public void test() {
+        System.out.println(
+                Optional.ofNullable(factoryConfig).map(FactoryConfig::getName).orElse(null));
+        System.out.println(Optional.ofNullable(scanConfig).map(ScanConfig::getName).orElse(null));
+    }
 
-  @Test
-  public void wenkyTest() {
-    System.out.println(wenky.getName());
-    System.out.println(JSON.toJSONString(properties));
-  }
+    @Test
+    public void wenkyTest() {
+        System.out.println(wenky.getName());
+        System.out.println(JSON.toJSONString(properties));
+    }
 }

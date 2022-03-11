@@ -22,6 +22,7 @@ task runFormat(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main 'com.google.googlejavaformat.java.Main'
     args '--replace'
+    args '--aosp' // default --google
     args mainJavaFiles
     args sourceSets.test.allJava.files
 }

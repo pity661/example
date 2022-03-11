@@ -8,5 +8,5 @@ package com.wenky.example.base.inner;
  * @create: 2020-10-21 10:14
  */
 public interface Counter {
-  public int next();
+    public int next();
 }

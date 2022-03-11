@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class RequestController {
-  @Autowired protected HttpServletRequest request;
+    @Autowired protected HttpServletRequest request;
 
-  @RequestMapping("/test")
-  public void test() {
-    HttpHeaders httpHeaders = new HttpHeaders();
-    Enumeration<String> headerNames = request.getHeaderNames();
-    while (headerNames.hasMoreElements()) {
-      String headerName = headerNames.nextElement();
-      httpHeaders.set(headerName, request.getHeader(headerName));
+    @RequestMapping("/test")
+    public void test() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            httpHeaders.set(headerName, request.getHeader(headerName));
+        }
+        System.out.println(httpHeaders.toString());
     }
-    System.out.println(httpHeaders.toString());
-  }
 }

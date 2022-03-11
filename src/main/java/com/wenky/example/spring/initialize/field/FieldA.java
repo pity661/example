@@ -12,6 +12,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class FieldA {
-  @Autowired public FieldB fieldB;
-  public String name;
+    @Autowired public FieldB fieldB;
+    public String name;
 }

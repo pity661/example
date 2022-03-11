@@ -8,5 +8,5 @@ package com.wenky.example.spring.dynamic;
  * @create: 2020-04-09 17:23
  */
 public interface ProxyInterface {
-  void cryOut();
+    void cryOut();
 }

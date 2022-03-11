@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class StructureA {
 
-  public StructureB structureB;
+    public StructureB structureB;
 
-  //    @Autowired
-  //    public StructureA(StructureB structureB) {
-  //        this.structureB = structureB;
-  //    }
+    //    @Autowired
+    //    public StructureA(StructureB structureB) {
+    //        this.structureB = structureB;
+    //    }
 }

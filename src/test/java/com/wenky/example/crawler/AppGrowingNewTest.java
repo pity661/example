@@ -8,10 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class AppGrowingNewTest {
 
-  @Autowired private AppGrowingFetchId appGrowingNew;
+    @Autowired private AppGrowingFetchId appGrowingNew;
 
-  @Test
-  public void test() throws IOException, InterruptedException {
-    appGrowingNew.listHandle();
-  }
+    @Test
+    public void test() throws IOException, InterruptedException {
+        appGrowingNew.listHandle();
+    }
 }

@@ -8,10 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class DynamicConfigTest {
-  @Autowired private ProxyInterface proxyInterface;
+    @Autowired private ProxyInterface proxyInterface;
 
-  @Test
-  public void test() {
-    proxyInterface.cryOut();
-  }
+    @Test
+    public void test() {
+        proxyInterface.cryOut();
+    }
 }

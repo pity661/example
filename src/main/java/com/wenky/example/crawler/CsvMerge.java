@@ -20,47 +20,48 @@ import org.springframework.stereotype.Component;
 @Component
 public class CsvMerge {
 
-  public void mergeFile() throws ParseException, IOException {
-    String dateStart = "2020-09-01";
-    String dateEnd = "2020-11-25";
-    Date start = DateUtils.parseDate(dateStart, "yyyy-MM-dd");
-    Date end = DateUtils.parseDate(dateEnd, "yyyy-MM-dd");
-    Set<String> allMobileSet = new HashSet<>();
-    String line;
-    BufferedReader reader;
-    while (start.before(end)) {
-      String targetFile = "/Users/huwenqi/Desktop/erlang/";
-      String fileName = targetFile + DateFormatUtils.format(start, "yyyy-MM-dd") + ".csv";
-      System.out.println(fileName);
-      try {
-        reader = new BufferedReader(new FileReader(fileName));
-      } catch (Exception e) {
-        e.printStackTrace();
-        start = DateUtils.addDays(start, 1);
-        continue;
-      }
-      System.out.println("start: " + allMobileSet.size());
-      while ((line = reader.readLine()) != null) {
-        allMobileSet.add(line);
-      }
-      System.out.println("end: " + allMobileSet.size());
-      start = DateUtils.addDays(start, 1);
+    public void mergeFile() throws ParseException, IOException {
+        String dateStart = "2020-09-01";
+        String dateEnd = "2020-11-25";
+        Date start = DateUtils.parseDate(dateStart, "yyyy-MM-dd");
+        Date end = DateUtils.parseDate(dateEnd, "yyyy-MM-dd");
+        Set<String> allMobileSet = new HashSet<>();
+        String line;
+        BufferedReader reader;
+        while (start.before(end)) {
+            String targetFile = "/Users/huwenqi/Desktop/erlang/";
+            String fileName = targetFile + DateFormatUtils.format(start, "yyyy-MM-dd") + ".csv";
+            System.out.println(fileName);
+            try {
+                reader = new BufferedReader(new FileReader(fileName));
+            } catch (Exception e) {
+                e.printStackTrace();
+                start = DateUtils.addDays(start, 1);
+                continue;
+            }
+            System.out.println("start: " + allMobileSet.size());
+            while ((line = reader.readLine()) != null) {
+                allMobileSet.add(line);
+            }
+            System.out.println("end: " + allMobileSet.size());
+            start = DateUtils.addDays(start, 1);
+        }
+        try (BufferedWriter writer =
+                new BufferedWriter(
+                        new FileWriter(
+                                FilePath.getDesktopPath("归并" + dateStart + "至" + dateEnd + ".csv"),
+                                true))) {
+            allMobileSet.stream()
+                    .forEach(
+                            mobile -> {
+                                try {
+                                    writer.write(mobile);
+                                    writer.newLine();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+            writer.flush();
+        }
     }
-    try (BufferedWriter writer =
-        new BufferedWriter(
-            new FileWriter(
-                FilePath.getDesktopPath("归并" + dateStart + "至" + dateEnd + ".csv"), true))) {
-      allMobileSet.stream()
-          .forEach(
-              mobile -> {
-                try {
-                  writer.write(mobile);
-                  writer.newLine();
-                } catch (IOException e) {
-                  e.printStackTrace();
-                }
-              });
-      writer.flush();
-    }
-  }
 }

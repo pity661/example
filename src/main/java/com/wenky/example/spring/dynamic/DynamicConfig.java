@@ -12,15 +12,15 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class DynamicConfig {
-  @Bean
-  public BeanHandleProxy proxy() {
-    return new BeanHandleProxy();
-  }
+    @Bean
+    public BeanHandleProxy proxy() {
+        return new BeanHandleProxy();
+    }
 
-  @Bean(initMethod = "initMethod")
-  public OrderBean orderBean(ProxyInterface proxy) {
-    OrderBean orderBean = new OrderBean();
-    orderBean.proxyInterface = proxy;
-    return orderBean;
-  }
+    @Bean(initMethod = "initMethod")
+    public OrderBean orderBean(ProxyInterface proxy) {
+        OrderBean orderBean = new OrderBean();
+        orderBean.proxyInterface = proxy;
+        return orderBean;
+    }
 }

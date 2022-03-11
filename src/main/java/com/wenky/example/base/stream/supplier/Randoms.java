@@ -14,24 +14,24 @@ import java.util.stream.IntStream;
  */
 public class Randoms {
 
-  public static List<Integer> getRandom() {
-    return new Random()
-        .ints(5, 20)
-        .distinct()
-        .limit(10)
-        .sorted()
-        //        .mapToObj(Integer::valueOf)
-        .boxed()
-        .collect(Collectors.toList());
-  }
+    public static List<Integer> getRandom() {
+        return new Random()
+                .ints(5, 20)
+                .distinct()
+                .limit(10)
+                .sorted()
+                //        .mapToObj(Integer::valueOf)
+                .boxed()
+                .collect(Collectors.toList());
+    }
 
-  public static void intStreamRange() {
-    Integer sum = IntStream.range(1, 10).limit(3).sum();
-    System.out.println(sum);
-  }
+    public static void intStreamRange() {
+        Integer sum = IntStream.range(1, 10).limit(3).sum();
+        System.out.println(sum);
+    }
 
-  public static void main(String[] args) {
-    System.out.println(getRandom());
-    intStreamRange();
-  }
+    public static void main(String[] args) {
+        System.out.println(getRandom());
+        intStreamRange();
+    }
 }
