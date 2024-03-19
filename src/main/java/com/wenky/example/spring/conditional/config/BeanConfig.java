@@ -1,6 +1,6 @@
 package com.wenky.example.spring.conditional.config;
 
-import com.wenky.demo.bean.config.ScanConfig;
+//import com.wenky.demo.bean.config.ScanConfig;
 import com.wenky.example.spring.conditional.bean.Person;
 import com.wenky.example.spring.conditional.condition.LinuxCondition;
 import com.wenky.example.spring.conditional.condition.WindowsCondition;
@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 // @Conditional({LinuxCondition.class})
 @Configuration
 public class BeanConfig {
-    ScanConfig scanConfig;
+//    ScanConfig scanConfig;
     // xxx 1
     @Conditional({WindowsCondition.class})
     @Bean(name = "xxx")

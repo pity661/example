@@ -13,6 +13,7 @@ sourceCompatibility = '1.8'
 
 repositories {
     mavenLocal()
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public/"}
     mavenCentral()
 //    maven {url lmr}
 }
@@ -28,7 +29,7 @@ task runFormat(type: JavaExec) {
 }
 
 dependencies {
-    implementation 'com.wenky:spring-boot-start-demo:1.0.5-SNAPSHOT'
+//    implementation 'com.wenky:spring-boot-start-demo:1.0.5-SNAPSHOT'
 //    implementation fileTree(dir:'libs',include:['*.jar'])
     // runformat
     implementation 'com.google.googlejavaformat:google-java-format:1.7'
